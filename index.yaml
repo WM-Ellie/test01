@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  shsh-chart:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2025-01-15T15:21:30.961049284+09:00"
+    description: A Helm chart for Kubernetes
+    digest: e5da8816aab3b62c26170ab6e96cda125e6c0cd4328c16c0746321eb8c27c77b
+    name: shsh-chart
+    type: application
+    urls:
+    - https://github.com/WM-Ellie/test01.git/shsh-chart-0.1.0.tgz
+    version: 0.1.0
+generated: "2025-01-15T15:21:30.960360181+09:00"
