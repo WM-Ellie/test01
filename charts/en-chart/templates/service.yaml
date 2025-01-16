@@ -15,9 +15,5 @@ spec:
   #    - protocol: {{ (index .Values.service.ports 0).protocol }}
   #      port: {{ (index .Values.service.ports 0).port }}
   #      targetPort: {{ (index .Values.service.ports 0).targetPort }}
-      #    - port: {{ .Values.service.ports.port }}
-      #      targetPort: http
-      #      protocol: TCP
-      #      name: http
   selector:
     {{- include "en-chart.selectorLabels" . | nindent 4 }}
