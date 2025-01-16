@@ -7,9 +7,14 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - protocol: {{ (index .Values.service.ports 0).protocol }}
-      port: {{ (index .Values.service.ports 0).port }}
-      targetPort: {{ (index .Values.service.ports 0).targetPort }}
+  {{- range .Values.service.ports }}
+    - protocol: {{ .protocol }}
+      port: {{ .port }}
+      targetPort: {{ .targetPort }}
+  {{- end }}
+  #    - protocol: {{ (index .Values.service.ports 0).protocol }}
+  #      port: {{ (index .Values.service.ports 0).port }}
+  #      targetPort: {{ (index .Values.service.ports 0).targetPort }}
       #    - port: {{ .Values.service.ports.port }}
       #      targetPort: http
       #      protocol: TCP
