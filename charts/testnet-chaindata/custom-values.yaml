@@ -137,7 +137,8 @@ volumeMounts:
 #   mountPath: "/etc/foo"
 #   readOnly: true
 
-nodeSelector: {}
+nodeSelector:
+  app: en-backup
 
 tolerations: []
 
