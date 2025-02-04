@@ -132,7 +132,7 @@ volumes:
 # Additional volumeMounts on the output Deployment definition.
 volumeMounts:
  - name: chaindata-volume
-   mountPath: "/data/wemix"
+   mountPath: "/data/wemix/geth"
 # - name: foo
 #   mountPath: "/etc/foo"
 #   readOnly: true
