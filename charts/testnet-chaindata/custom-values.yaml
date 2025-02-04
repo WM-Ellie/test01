@@ -60,15 +60,15 @@ service:
   ports:
     - name: p2p
       port: 8589
-      targetPort: p2p
+      targetPort: 8589
       protocol: TCP
     - name: http
       port: 8588
-      targetPort: http
+      targetPort: 8588
       protocol: TCP
     - name: websocket
       port: 8598
-      targetPort: websocket
+      targetPort: 8598
       protocol: TCP
   selector:
     app: testnet-data
