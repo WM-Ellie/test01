@@ -9,6 +9,7 @@ metadata:
     {{- toYaml . | nindent 4 }}
     {{- end }}
 spec:
+  replicas: {{ .Values.replicaCount }}
   serviceName: {{ include "release.fullname" . }}-svc
   {{- with .Values.statefulset.updateStrategy }}
   updateStrategy:
