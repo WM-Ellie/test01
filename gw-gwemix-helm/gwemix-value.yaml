@@ -13,7 +13,6 @@ prefix: "az-testnet" # 수정필요
 # ------------------------------------- #
 #   StatefulSet
 # ------------------------------------- #
-replicaCount: 2
 statefulset:
   ## @params statefulset.name 
   name: "sts"  # {name_prefix}-sts
