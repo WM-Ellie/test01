@@ -114,7 +114,7 @@ snapshot:
   name: "backup-snapshot" # 생성할 Snapshot 이름
 #  className: "csi-azure-disk-snapclass" # VolumeSnapshotClass 이름 / gw
   className: "csi-azure-disk-snapshot-class" # VolumeSnapshotClass 이름
-  persistentVolumeClaimName: "gwemix-en-1-pvc" # 스냅샷을 생성할 PVC 이름 (수정필요) // snapshot으로지정햇는ㄷ ㅔpvc 네이밍 의미
+  persistentVolumeClaimName: "chaindata-pvc-1" # 스냅샷을 생성할 PVC 이름 (수정필요) // snapshot으로지정햇는ㄷ ㅔpvc 네이밍 의미
 
 # ------------------------------------- #
 #   HPA
