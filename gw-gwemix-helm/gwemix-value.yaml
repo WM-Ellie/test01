@@ -36,9 +36,9 @@ statefulset:
   containers:
     - name: "pod"  # {name_prefix}-sts-{1..N}
       image:
-        repository: acrellie.azurecr.io/repository/testnet-en
+        repository: acrellie.azurecr.io/gwemix
         pullPolicy: IfNotPresent  
-        tag: "v0.2"  # 수정필요
+        tag: "testnet"  # 수정필요
       ports:
         - name: http
           protocol: TCP
