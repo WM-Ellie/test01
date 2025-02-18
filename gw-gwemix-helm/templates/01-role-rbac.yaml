@@ -4,8 +4,8 @@ metadata:
   name: snapshot-manager
   namespace: {{ .Values.snapshot.snapshotNamespace }}
   annotations:
-    "helm.sh/hook": "pre-install" # Hook 설정
-    "helm.sh/hook-weight": "2" # 실행 순서를 제어 (작은 숫자가 먼저 실행)
+#    "helm.sh/hook": "pre-install" # Hook 설정
+#    "helm.sh/hook-weight": "2" # 실행 순서를 제어 (작은 숫자가 먼저 실행)
 rules:
   - apiGroups: ["snapshot.storage.k8s.io"]
     resources: ["volumesnapshots"]
@@ -17,8 +17,8 @@ metadata:
   name: snapshot-manager-binding
   namespace: {{ .Values.snapshot.snapshotNamespace }}
   annotations:
-    "helm.sh/hook": "pre-install" # Hook 설정
-    "helm.sh/hook-weight": "3" # 실행 순서를 제어 (작은 숫자가 먼저 실행)
+#    "helm.sh/hook": "pre-install" # Hook 설정
+#    "helm.sh/hook-weight": "3" # 실행 순서를 제어 (작은 숫자가 먼저 실행)
 subjects:
   - kind: ServiceAccount
     name: {{ .Values.serviceAccount.name }}
