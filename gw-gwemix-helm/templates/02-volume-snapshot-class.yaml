@@ -1,0 +1,9 @@
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshotClass
+metadata:
+  name: {{ .Values.snapshot.className }}
+  annotations:
+    "helm.sh/hook": "pre-install" # Hook 설정
+    "helm.sh/hook-weight": "4" # 실행 순서를 제어 (작은 숫자가 먼저 실행)
+driver: disk.csi.azure.com
+deletionPolicy: Delete

@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.prefix }}-{{ .Values.statefulset.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "release.labels" . | nindent 4 }}
+    {{- with .Values.statefulset.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  serviceName: {{ include "release.fullname" . }}-svc
+  {{- with .Values.statefulset.updateStrategy }}
+  updateStrategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  podManagementPolicy: {{ .Values.statefulset.podManagementPolicy }}
+  selector:
+    matchLabels:
+      {{- include "release.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "release.selectorLabels" . | nindent 8 }}
+        {{- with .Values.statefulset.labels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        app: {{ .Values.prefix }}-{{ .Values.statefulset.name }}
+      {{- with .Values.statefulset.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec: 
+      {{- with .Values.statefulset.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.statefulset.podSecurityContext | nindent 8 }}
+      containers:
+      {{- range .Values.statefulset.containers }}
+        - name: {{ .name }}
+          image: "{{ .image.repository }}:{{ .image.tag | default .image.default }}"
+          imagePullPolicy: {{ .image.pullPolicy }}
+          ports:
+          {{- range .ports }}
+            - name: {{ .name }}
+              containerPort: {{ .containerPort }}
+              protocol: {{ .protocol }}
+          {{- end }}
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                {{- toYaml .lifecycle.preStop.exec.command | nindent 16 }}
+          resources:
+            {{- toYaml .resources | nindent 12 }}
+          volumeMounts:
+            {{- toYaml .volumeMounts | nindent 12 }}
+      {{- end }}
+  volumeClaimTemplates:
+    {{- range .Values.statefulset.volumeClaimTemplates }}
+    - metadata:
+        name: {{ .metadata.name }}
+      spec:
+        accessModes:
+          {{- toYaml .spec.accessModes | nindent 8 }}
+        storageClassName: {{ .spec.storageClassName }}
+        resources:
+          requests:
+            storage: {{ .spec.resources.requests.storage }}
+        {{- with .spec.dataSource }}
+        dataSource:
+          name: {{ .name }}
+          kind: {{ .kind }}
+          apiGroup: {{ .apiGroup }}
+        {{- end }}
+    {{- end }}

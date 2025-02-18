@@ -1,0 +1,37 @@
+{{- if and .Values.snapshot.name }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: delete-{{ .Values.snapshot.name }}
+  namespace: {{ .Values.namespace }}
+  annotations:
+    "helm.sh/hook": "pre-install" # Hook 설정
+    "helm.sh/hook-weight": "5" # 실행 순서를 제어 (작은 숫자가 먼저 실행)
+    "helm.sh/hook-delete-policy": "hook-succeeded"
+spec:
+  template:
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      containers:
+        - name: delete-snapshot
+          image: bitnami/kubectl:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              if kubectl get volumesnapshot {{ .Values.snapshot.name }} -n {{ .Values.namespace }} > /dev/null 2>&1; then
+                echo "[INFO] Deleting VolumeSnapshot - {{ .Values.snapshot.name }}..."
+                echo ""
+                kubectl delete volumesnapshot {{ .Values.snapshot.name }} -n {{ .Values.namespace }}
+                echo ""
+                # Re-check after deletion
+                if ! kubectl get volumesnapshot {{ .Values.snapshot.name }} -n {{ .Values.namespace }} > /dev/null 2>&1; then
+                  echo "[INFO] {{ .Values.snapshot.name }} - VolumeSnapshot has been deleted!"
+                else
+                  echo "[ERROR] Failed to delete {{ .Values.snapshot.name }} VolumeSnapshot. Please check manually."
+                fi
+              else
+                echo "[INFO] {{ .Values.snapshot.name }} - VolumeSnapshot  not found. Skipping deletion!"
+              fi
+      restartPolicy: OnFailure
+{{- end }}

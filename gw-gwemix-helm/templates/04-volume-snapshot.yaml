@@ -1,0 +1,12 @@
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshot
+metadata:
+  name: {{ .Values.snapshot.name }}
+  namespace: {{ .Values.snapshot.snapshotNamespace }}
+  annotations:
+    "helm.sh/hook": "pre-install" # Hook 설정
+    "helm.sh/hook-weight": "6" # Job 완료 후 실행되도록 우선순위 설정
+spec:
+  volumeSnapshotClassName: {{ .Values.snapshot.className }}
+  source:
+    persistentVolumeClaimName: {{ .Values.snapshot.persistentVolumeClaimName }}

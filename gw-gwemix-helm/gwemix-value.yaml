@@ -1,0 +1,161 @@
+# ------------------------------------- #
+# GWEMIX - StatefulSet (v1-250115)
+# ------------------------------------- #
+nameOverride: ""
+fullnameOverride: ""
+
+# ------------------------------------- #
+#   Common Values
+# ------------------------------------- #
+namespace: "gwemix" # 수정필요
+prefix: "az-main-testbed" # 수정필요
+
+# ------------------------------------- #
+#   StatefulSet
+# ------------------------------------- #
+statefulset:
+  ## @params statefulset.name 
+  name: "sts"  # {name_prefix}-sts
+
+  ## @params statefulset.labels
+  labels: {}
+
+  ## @params statefulset.podAnnotations: StatefulSet의 Annotations
+  # podAnnotations: {}
+
+  ## @params statefulset.revisionHistoryLimit
+  revisionHistoryLimit: 2
+
+  ## @params statefulset.podManagementPolicy (default : OrderedReady)
+  podManagementPolicy: Parallel 
+
+  # ------------------------------------- #
+  #   Containers ( StatefulSet )
+  # ------------------------------------- #
+  containers:
+    - name: "pod"  # {name_prefix}-sts-{1..N}
+      image:
+        repository: acrjackdev.azurecr.io/node  # 수정필요
+        pullPolicy: Always  
+        tag: gwemix-0.10.8  # 수정필요
+      ports:
+        - name: http
+          protocol: TCP
+          containerPort: 8588
+        - name: websocket
+          protocol: TCP
+          containerPort: 8598
+        - name: p2p
+          protocol: TCP
+          containerPort: 8589
+      env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+      command: [] # 명확히 빈 배열로 설정
+      envFrom: []
+      securityContext: {}
+      lifecycle:
+        preStop:
+          exec:
+            command: ["/data/wemix/bin/gwemix-docker.sh", "stop"]
+      livenessProbe: {}
+      readinessProbe: {}
+      startupProbe: {}
+      resources:
+        limits:
+          cpu: "2"
+          memory: "8Gi"
+        requests:
+          cpu: "2"
+          memory: "8Gi"
+      volumeMounts:
+        - name: data
+          mountPath: /data/wemix/geth
+
+  # ------------------------------------- #
+  #   VolumeClaimTemplates ( StatefulSet )
+  # ------------------------------------- #
+  volumeClaimTemplates:
+    - metadata:
+        name: "data"
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: managed-premium
+        resources:
+          requests:
+            storage: 850Gi  # 수정필요
+        dataSource:
+          name: "backup-snapshot"  # 수정필요
+          kind: VolumeSnapshot
+          apiGroup: snapshot.storage.k8s.io
+
+  # ------------------------------------- #
+  #   Strategy ( StatefulSet )
+  # ------------------------------------- #
+  updateStrategy:
+    type: OnDelete
+  nodeSelector: {}
+  tolerations: []
+
+  # ------------------------------------- #
+  #   Affinity ( StatefulSet )
+  # ------------------------------------- #
+  affinity: {}
+
+# ------------------------------------- #
+#   Snapshot Configuration
+# ------------------------------------- #
+## 기존 PVC의 스냅샷 생성
+snapshot:
+  name: "backup-snapshot" # 생성할 Snapshot 이름
+  className: "csi-azure-disk-snapclass" # VolumeSnapshotClass 이름
+  persistentVolumeClaimName: "gwemix-en-1-pvc" # 스냅샷을 생성할 PVC 이름 (수정필요)
+
+# ------------------------------------- #
+#   HPA
+# ------------------------------------- #
+autoscaling:
+  enabled: true
+  name: "hpa"  # {name_prefix}-hpa
+  minReplicas: 1
+  maxReplicas: 1
+  targetMemoryUtilizationPercentage: 90
+
+# ------------------------------------- #
+#   Service Account
+# ------------------------------------- #
+serviceAccount:
+  create: true
+  name: "snapshot-service-account"
+
+# ------------------------------------- #
+#   Service
+# ------------------------------------- #
+service:
+  enabled: true
+  name: "svc"  # {name_prefix}-svc
+  type: LoadBalancer
+  setup:
+    - external: http
+      port: 8588
+      targetPort: 8588 ### Check ###
+      protocol: TCP
+
+    - external: websocket
+      port: 8598
+      targetPort: 8598 ### Check ###
+      protocol: TCP
+
+    - external: p2p
+      port: 8589
+      targetPort: 8589 ### Check ###
+      protocol: TCP
+
+# ------------------------------------- #
+#   Ingress
+# ------------------------------------- #
+ingress:
+  enabled: false
