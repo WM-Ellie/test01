@@ -37,7 +37,7 @@ statefulset:
     - name: "pod"  # {name_prefix}-sts-{1..N}
       image:
         repository: acrellie.azurecr.io/gwemix
-        pullPolicy: IfNotPresent  
+        pullPolicy: Always  
         tag: "testnet"  # 수정필요
       ports:
         - name: http
