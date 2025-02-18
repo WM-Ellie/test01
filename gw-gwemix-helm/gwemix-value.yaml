@@ -7,8 +7,8 @@ fullnameOverride: ""
 # ------------------------------------- #
 #   Common Values
 # ------------------------------------- #
-namespace: "gwemix" # 수정필요
-prefix: "az-main-testbed" # 수정필요
+namespace: "default" # 수정필요
+prefix: "az-testnet" # 수정필요
 
 # ------------------------------------- #
 #   StatefulSet
@@ -20,13 +20,13 @@ statefulset:
   ## @params statefulset.labels
   labels: {}
 
-  ## @params statefulset.podAnnotations: StatefulSet의 Annotations
+  ## @params statefulset.podAnnottions: StatefulSet의 Annotations
   # podAnnotations: {}
 
-  ## @params statefulset.revisionHistoryLimit
+  ## @params statefulset.revisionHistoryLimit // 이전버전 replicas 보관 개수
   revisionHistoryLimit: 2
 
-  ## @params statefulset.podManagementPolicy (default : OrderedReady)
+  ## @params statefulset.podManagementPolicy (default : OrderedReady) //파드 동시에 생성
   podManagementPolicy: Parallel 
 
   # ------------------------------------- #
@@ -35,9 +35,9 @@ statefulset:
   containers:
     - name: "pod"  # {name_prefix}-sts-{1..N}
       image:
-        repository: acrjackdev.azurecr.io/node  # 수정필요
-        pullPolicy: Always  
-        tag: gwemix-0.10.8  # 수정필요
+        repository: acrellie.azurecr.io/repository/testnet-en
+        pullPolicy: IfNotPresent  
+        tag: "v0.2"  # 수정필요
       ports:
         - name: http
           protocol: TCP
@@ -56,6 +56,7 @@ statefulset:
       command: [] # 명확히 빈 배열로 설정
       envFrom: []
       securityContext: {}
+## 파드 종료되기 전 gwemix stop      
       lifecycle:
         preStop:
           exec:
@@ -83,10 +84,10 @@ statefulset:
       spec:
         accessModes:
           - ReadWriteOnce
-        storageClassName: managed-premium
+        storageClassName: managed-csi-premium
         resources:
           requests:
-            storage: 850Gi  # 수정필요
+            storage: 900Gi  # 수정필요
         dataSource:
           name: "backup-snapshot"  # 수정필요
           kind: VolumeSnapshot
@@ -111,8 +112,9 @@ statefulset:
 ## 기존 PVC의 스냅샷 생성
 snapshot:
   name: "backup-snapshot" # 생성할 Snapshot 이름
-  className: "csi-azure-disk-snapclass" # VolumeSnapshotClass 이름
-  persistentVolumeClaimName: "gwemix-en-1-pvc" # 스냅샷을 생성할 PVC 이름 (수정필요)
+#  className: "csi-azure-disk-snapclass" # VolumeSnapshotClass 이름 / gw
+  className: "csi-azure-disk-snapshot-class" # VolumeSnapshotClass 이름
+  persistentVolumeClaimName: "gwemix-en-1-pvc" # 스냅샷을 생성할 PVC 이름 (수정필요) // snapshot으로지정햇는ㄷ ㅔpvc 네이밍 의미
 
 # ------------------------------------- #
 #   HPA
