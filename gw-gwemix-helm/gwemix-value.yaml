@@ -21,7 +21,8 @@ statefulset:
   labels: {}
 
   ## @params statefulset.podAnnottions: StatefulSet의 Annotations
-  # podAnnotations: {}
+  podAnnotations:
+    prometheus.io/scrape: "true"
 
   ## @params statefulset.revisionHistoryLimit // 이전버전 replicas 보관 개수
   revisionHistoryLimit: 2
