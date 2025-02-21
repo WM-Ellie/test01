@@ -50,6 +50,9 @@ statefulset:
         - name: p2p
           protocol: TCP
           containerPort: 8589
+        - name: metric
+          protocol: TCP
+          containerPort: 6060
       env:
         - name: POD_NAME
           valueFrom:
