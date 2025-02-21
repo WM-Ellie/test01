@@ -24,7 +24,7 @@ statefulset:
   podAnnotations:
     prometheus.io/scrape: "true"
     prometheus.io/port: "6060"
-
+    prometheus.io/path: "/debug/metrics/prometheus"
   ## @params statefulset.revisionHistoryLimit // 이전버전 replicas 보관 개수
   revisionHistoryLimit: 2
 
