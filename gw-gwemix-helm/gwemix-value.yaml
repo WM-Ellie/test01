@@ -163,6 +163,11 @@ service:
       port: 8589
       targetPort: 8589 ### Check ###
       protocol: TCP
+      
+    - external: metric
+      port: 6060
+      targetPort: 6060 ### Check ###
+      protocol: TCP
 
 # ------------------------------------- #
 #   Ingress
